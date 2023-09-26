@@ -6,6 +6,16 @@ class Network():
         self.layers = []
         self.forward_outputs = []
         self.input_signal = None
+        self.loss = self.set_loss()
+        self.prime = self.set_loss_prime()
+
+    def set_loss(self, loss="MSE"):
+        if loss == "MSE":
+            return lambda y_true, y_pred: np.mean(np.power(y_true - y_pred, 2))
+
+    def set_loss_prime(self, loss="MSE"):
+        if loss == "MSE":
+            return lambda y_true, y_pred: 2*(y_pred - y_true) / y_true.size
 
     def add(self, input_dim, output_dim, activation_function):
         new_layer = DenseLayer(input_dim, output_dim, activation_function)
