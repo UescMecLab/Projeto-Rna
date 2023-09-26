@@ -1,7 +1,7 @@
 import numpy as np
-
 class Neuron():
-    def __init__(self, input_dim, activation_function):
+    def __init__(self, input_dim, activation_function, index):
+        self.index = index
         self.input_dim = input_dim
         self.weights = np.random.rand(input_dim)
         self.bias = np.array(np.random.random())
@@ -29,34 +29,39 @@ class Neuron():
             return lambda x: 1    
     
     def set_delta_w(self, output_error, learning_rate, layer_error):
-      J_w = np.array([(-self.prime_activation(self.vk) * self.input.T * layer_error)])
+      J_w = np.array([(self.prime_activation(self.vk) * self.input.T * layer_error)])
       J_ww = np.dot(J_w.T,  J_w)
       grad = np.dot(J_w.T, output_error)
       return(np.dot(np.linalg.inv(J_ww + np.dot(learning_rate, np.eye(self.input_dim))), grad))
 
     def set_delta_b(self, output_error, learning_rate, layer_error):
-        J_b = np.array([(-self.prime_activation(self.vk) * layer_error)])
+        J_b = np.array([(self.prime_activation(self.vk) * layer_error[self.index])])
         J_bb = np.dot(J_b.T,  J_b)
         grad = np.dot(J_b.T, output_error)
         return(np.dot(np.linalg.inv(J_bb + np.dot(learning_rate, np.eye(1))), grad))
 
     def set_error_to_propag(self):
-      return (-self.prime_activation(self.vk) * self.weights.T)
+      return (self.prime_activation(self.vk) * self.weights.T)
 
     def backpropagation(self, output_error, learning_rate, layer_error):
-        delta_w = self.set_delta_w(output_error, learning_rate, layer_error)
-        delta_b = self.set_delta_b(output_error, learning_rate, layer_error)
-        error_to_propag = self.set_error_to_propag()
-        print ("ΔW.T = ", delta_w.T, " | ΔB = ", delta_b.T, "| φ'(vk).W = ", error_to_propag.T)
-        return (error_to_propag)
+        self.delta_w = self.set_delta_w(output_error, learning_rate, layer_error)
+        self.delta_b = self.set_delta_b(output_error, learning_rate, layer_error)
+        self.error_to_propag = self.set_error_to_propag()
+        self.weights -= self.delta_w.flatten()
+        self.bias -= self.delta_b[0]
+        return (self.error_to_propag)
+
+    def print_backpropagation_parameters(self):
+        print ("ΔW.T = ", self.delta_w.T, " | ΔB = ", self.delta_b.T, "| φ'(vk).W = ", self.error_to_propag.T)
+
 
 class DenseLayer():
     def __init__(self):
         self.neurons = []
 
     def __init__(self, input_dim, output_dim, activation_function):
-        self.neurons = [Neuron(input_dim, activation_function) for _ in range(output_dim)]
-
+        self.neurons = [Neuron(input_dim, activation_function, i) for i in range(output_dim)]
+   
     def forward_propagation(self, input_signal):
         outputs = []
         for neuron in self.neurons:
@@ -65,10 +70,10 @@ class DenseLayer():
         return outputs
     
     def backpropagation(self, output_error, learning_rate, layer_error):
- #       outputs = []
+        outputs = []
         for neuron in self.neurons:
             output = neuron.backpropagation(output_error, learning_rate, layer_error)
-#            outputs.append(output)
+            outputs.append(output)
         return output
 
     def set_weights(self, weights):
@@ -110,12 +115,12 @@ class Network():
         for layer in self.layers:
             y = layer.forward_propagation(y)
             forward_outputs.append(y)
-        self.forward_outputs = np.array(forward_outputs, dtype=type(forward_outputs))
+        self.forward_outputs = forward_outputs
         self.y_pred = y
 
     def backpropagation(self, y_desired, learning_rate=0.01):
         output_error = np.array([self.y_pred - y_desired])
-        layer_error = 1
+        layer_error = np.array([1])
         for layer in reversed(self.layers):
             layer_error = layer.backpropagation(output_error, learning_rate, layer_error)
 
@@ -155,6 +160,7 @@ def launchExample():
   network.forward_propagation(input_signal)
   network.print_forward_propagation()
   network.backpropagation(np.array([4]))
-
+  network.forward_propagation(input_signal)
+  network.print_forward_propagation()
 if __name__ == '__main__':
     launchExample()
