@@ -1,10 +1,9 @@
 import numpy as np
-import Neuron
+from neuron import Neuron
 
 class DenseLayer():
-    def __init__(self, index):
+    def __init__(self):
         self.neurons = []
-        self.index = index
 
     def __init__(self, input_dim, output_dim, activation_function):
         self.neurons = [Neuron(input_dim, activation_function, i) for i in range(output_dim)]

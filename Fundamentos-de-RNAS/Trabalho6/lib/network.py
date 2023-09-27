@@ -1,5 +1,5 @@
 import numpy as np
-import DenseLayer
+from denseLayer import DenseLayer
 
 class Network():
     def __init__(self):
@@ -9,13 +9,35 @@ class Network():
         self.loss = self.set_loss()
         self.prime = self.set_loss_prime()
 
+    # runs forward through test data
+    def predict(self, x_test):
+        samples = len(x_test)
+        result = []
+        for sample in samples:
+            input_signal = x_test[sample]
+            self.forward_propagation(input_signal)
+            result.append(self.y_pred)
+
+    def train(self, x_train, y_train, epochs, learning_rate):
+        samples = len(x_train)
+
+        for epoch in epochs:
+            error = 0
+            for sample in samples:
+                input_signal = x_train[sample]
+                self.forward_propagation(input_signal)
+                error += self.loss(y_train[sample], self.y_pred)
+                self.backpropagation(y_train[sample], learning_rate)
+            error /= samples
+            print('epoch %d/%d   error=%f' % (epoch+1, epochs, error))
+
     def set_loss(self, loss="MSE"):
         if loss == "MSE":
             return lambda y_true, y_pred: np.mean(np.power(y_true - y_pred, 2))
 
     def set_loss_prime(self, loss="MSE"):
         if loss == "MSE":
-            return lambda y_true, y_pred: 2*(y_pred - y_true) / y_true.size
+            return lambda y_true, y_pred: 2 * (y_pred - y_true) / y_true.size
 
     def add(self, input_dim, output_dim, activation_function):
         new_layer = DenseLayer(input_dim, output_dim, activation_function)

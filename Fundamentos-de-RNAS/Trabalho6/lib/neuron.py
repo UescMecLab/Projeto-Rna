@@ -50,7 +50,6 @@ class Neuron():
         self.error_to_propag = self.set_error_to_propag()
         self.weights -= self.delta_w.flatten()
         self.bias -= self.delta_b[0]
-        self.print_backpropagation_parameters()
         return (self.error_to_propag)
 
     def print_backpropagation_parameters(self):
