@@ -13,7 +13,7 @@ class Network():
     def predict(self, x_test):
         samples = len(x_test)
         result = []
-        for sample in samples:
+        for sample in range(samples):
             input_signal = x_test[sample]
             self.forward_propagation(input_signal)
             result.append(self.y_pred)
@@ -21,9 +21,9 @@ class Network():
     def train(self, x_train, y_train, epochs, learning_rate):
         samples = len(x_train)
 
-        for epoch in epochs:
+        for epoch in range(epochs):
             error = 0
-            for sample in samples:
+            for sample in range(samples):
                 input_signal = x_train[sample]
                 self.forward_propagation(input_signal)
                 error += self.loss(y_train[sample], self.y_pred)
