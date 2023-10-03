@@ -7,7 +7,7 @@ class DenseLayer():
 
     def __init__(self, input_dim, output_dim, activation_function):
         self.neurons = [Neuron(input_dim, activation_function, i) for i in range(output_dim)]
-   
+
     def forward_propagation(self, input_signal):
         outputs = []
         for neuron in self.neurons:
@@ -18,10 +18,7 @@ class DenseLayer():
     def backpropagation(self, output_error, learning_rate, layer_error):
         outputs = []
         for neuron in self.neurons:
-            if (len(layer_error) > 1):
-                output = neuron.backpropagation(output_error, learning_rate, layer_error[neuron.index])
-            else:
-                output = neuron.backpropagation(output_error, learning_rate, layer_error[0])
+            output = neuron.backpropagation(output_error, learning_rate, layer_error[0])
             outputs.append(output)
         return np.array(outputs)
 

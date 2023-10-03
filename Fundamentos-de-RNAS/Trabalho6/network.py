@@ -17,9 +17,16 @@ class Network():
             input_signal = x_test[sample]
             self.forward_propagation(input_signal)
             result.append(self.y_pred)
+        return (np.array(result).flatten())
 
-    def train(self, x_train, y_train, epochs, learning_rate):
+    def CheckCost(self, tol=0.001):
+        if (len(self.HistCost) <= 2):
+            return False
+        return (abs(self.HistCost[-1] - self.HistCost[-2]) < tol)
+
+    def train(self, x_train, y_train, epochs, learning_rate, print_epochs=True):
         samples = len(x_train)
+        self.HistCost = []
 
         for epoch in range(epochs):
             error = 0
@@ -29,7 +36,9 @@ class Network():
                 error += self.loss(y_train[sample], self.y_pred)
                 self.backpropagation(y_train[sample], learning_rate)
             error /= samples
-            print('epoch %d/%d   error=%f' % (epoch+1, epochs, error))
+            self.HistCost.append(error)
+            if print_epochs == True:
+                print('epoch %d/%d   error=%f' % (epoch + 1, epochs, error))
 
     def set_loss(self, loss="MSE"):
         if loss == "MSE":

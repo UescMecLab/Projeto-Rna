@@ -29,14 +29,14 @@ class Neuron():
         elif activation == 'linear':
             return lambda x: 1    
     
-    def set_delta_w(self, output_error, learning_rate, layer_error):
-      J_w = np.array([(self.prime_activation(self.vk) * self.input.T * layer_error)])
+    def set_delta_w(self, output_error, learning_rate):
+      J_w = np.array([(self.prime_activation(self.vk) * self.input.T * self.layer_error)])
       J_ww = np.dot(J_w.T,  J_w)
       grad = np.dot(J_w.T, output_error)
       return(np.dot(np.linalg.inv(J_ww + np.dot(learning_rate, np.eye(self.input_dim))), grad))
 
-    def set_delta_b(self, output_error, learning_rate, layer_error):
-        J_b = np.array([(self.prime_activation(self.vk) * layer_error[self.index])])
+    def set_delta_b(self, output_error, learning_rate):
+        J_b = np.array([(self.prime_activation(self.vk) * self.layer_error)])
         J_bb = np.dot(J_b.T,  J_b)
         grad = np.dot(J_b.T, output_error)
         return(np.dot(np.linalg.inv(J_bb + np.dot(learning_rate, np.eye(1))), grad))
@@ -45,12 +45,13 @@ class Neuron():
       return (self.prime_activation(self.vk) * self.weights.T)
 
     def backpropagation(self, output_error, learning_rate, layer_error):
-        self.delta_w = self.set_delta_w(output_error, learning_rate, layer_error)
-        self.delta_b = self.set_delta_b(output_error, learning_rate, layer_error)
+        self.layer_error = layer_error[self.index] if (len(layer_error) > 1) else layer_error[0]
+        self.delta_w = self.set_delta_w(output_error, learning_rate)
+        self.delta_b = self.set_delta_b(output_error, learning_rate)
         self.error_to_propag = self.set_error_to_propag()
         self.weights -= self.delta_w.flatten()
         self.bias -= self.delta_b[0]
-#        self.print_backpropagation_parameters()
+        self.print_backpropagation_parameters()
         return (self.error_to_propag)
 
     def print_backpropagation_parameters(self):

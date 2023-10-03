@@ -32,19 +32,20 @@ def test_forward_backward():
 
 def launchRandom():
   input_dim = 2
-  output_dim = 2
+  output_dim = 4
 
   network = Network()
   network.add(input_dim, output_dim, 'tanh')
   network.add(output_dim, 1, 'linear')
 
-  for _ in range(3):
-    input_signal = np.random.rand(input_dim)
-    network.forward_propagation(input_signal)
-    network.print_forward_propagation()
-    print()
+  # for _ in range(3):
+  input_signal = np.random.rand(input_dim)
+  network.forward_propagation(input_signal)
+  network.print_forward_propagation()
+  network.backpropagation(np.array([4]))
+  print()
 
      
 if __name__ == '__main__':
-  test_forward_backward()
+  # test_forward_backward()
   launchRandom()  
