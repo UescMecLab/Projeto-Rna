@@ -65,9 +65,8 @@ class Network():
 
     def backpropagation(self, y_desired, learning_rate=0.01):
         output_error = self.loss_prime(y_desired, self.y_pred)
-        layer_error = np.array([[1]])
         for layer in reversed(self.layers):
-            layer_error = layer.backpropagation(output_error, learning_rate, layer_error)
+            output_error = layer.backpropagation(output_error, learning_rate)
 
     def print_forward_propagation(self):
         print ("--------------------Forward Propagation----------------------")

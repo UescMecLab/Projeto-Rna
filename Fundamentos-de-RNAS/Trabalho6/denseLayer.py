@@ -15,10 +15,10 @@ class DenseLayer():
             outputs.append(output)
         return outputs
     
-    def backpropagation(self, output_error, learning_rate, layer_error):
+    def backpropagation(self, output_error, learning_rate):
         outputs = []
         for neuron in self.neurons:
-            output = neuron.backpropagation(output_error, learning_rate, layer_error[0])
+            output = neuron.backpropagation(output_error, learning_rate)
             outputs.append(output)
         return np.array(outputs)
 
