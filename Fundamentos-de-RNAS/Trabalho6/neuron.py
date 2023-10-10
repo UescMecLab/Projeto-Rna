@@ -30,25 +30,27 @@ class Neuron():
             return lambda x: 1    
     
     def set_delta_w(self, output_error, learning_rate):
-      J_w = np.array([(self.prime_activation(self.vk) * self.input * self.output_error)])
-      J_ww = np.dot(J_w.T,  J_w)
-      grad = np.dot(J_w.T, output_error)
-      return(np.dot(np.linalg.inv(J_ww + np.dot(learning_rate, np.eye(self.input_dim))), grad))
+        return (self.input * output_error * learning_rate) # grad
+        J_w = np.array([(self.input * output_error)])
+        J_ww = np.dot(J_w.T,  J_w)
+        grad = np.dot(J_w.T, output_error)
+        return(np.dot(np.linalg.inv(J_ww + np.dot(learning_rate, np.eye(self.input_dim))), grad))
 
     def set_delta_b(self, output_error, learning_rate):
-        J_b = np.array([(self.prime_activation(self.vk) * self.output_error)])
+        return(output_error * learning_rate) # grad
+        J_b = np.array([(output_error)])
         J_bb = np.dot(J_b.T,  J_b)
         grad = np.dot(J_b.T, output_error)
-        return(np.dot(np.linalg.inv(J_bb + np.dot(learning_rate, np.eye(1))), grad))
+        return((np.dot(np.linalg.inv(J_bb + np.dot(learning_rate, np.eye(1))), grad))[0])
 
     def set_error_to_propag(self, output_error):
       return np.sum(output_error * self.weights)
 
     def backpropagation(self, output_error, learning_rate):
         output_error = output_error[self.index] if (len(output_error) > 1) else output_error[0]
-        output_error = self.prime_activation(self.vk) * output_error
-        self.delta_w = self.input * output_error * learning_rate
-        self.delta_b = output_error * learning_rate
+        output_error = output_error * self.prime_activation(self.vk)
+        self.delta_w = self.set_delta_w(output_error, learning_rate)
+        self.delta_b = self.set_delta_b(output_error, learning_rate)
 
         self.error_to_propag = self.set_error_to_propag(output_error)
 
