@@ -47,5 +47,5 @@ def launchRandom():
 
      
 if __name__ == '__main__':
-  # test_forward_backward()
-  launchRandom()  
+  test_forward_backward()
+  #launchRandom()  

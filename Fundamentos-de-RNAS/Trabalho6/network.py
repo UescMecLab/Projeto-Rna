@@ -7,7 +7,7 @@ class Network():
         self.forward_outputs = []
         self.input_signal = None
         self.loss = self.set_loss()
-        self.prime = self.set_loss_prime()
+        self.loss_prime = self.set_loss_prime()
 
     # runs forward through test data
     def predict(self, x_test):
@@ -64,7 +64,7 @@ class Network():
         self.y_pred = y
 
     def backpropagation(self, y_desired, learning_rate=0.01):
-        output_error = np.array([self.y_pred - y_desired])
+        output_error = np.array([self.loss_prime(y_desired, self.y_pred)])
         layer_error = np.array([[1]])
         for layer in reversed(self.layers):
             layer_error = layer.backpropagation(output_error, learning_rate, layer_error)
