@@ -47,7 +47,8 @@ class Neuron():
     def backpropagation(self, output_error, learning_rate, layer_error):
         self.layer_error = layer_error[self.index] if (len(layer_error) > 1) else layer_error[0]
         self.delta_w = self.set_delta_w(output_error, learning_rate)
-        self.delta_b = self.set_delta_b(output_error, learning_rate)
+        #self.delta_b = self.set_delta_b(output_error, learning_rate)
+        self.delta_b = output_error[0] * learning_rate
         self.error_to_propag = self.set_error_to_propag()
         self.weights -= self.delta_w.flatten()
         self.bias -= self.delta_b[0]
